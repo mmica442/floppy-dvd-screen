@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <style>
+    @font-face { font-family: W95FA; src: url('fonts/W95FA_numbers.otf'); } 
+    body {
+	  background-color: #c0c0c0;
+	  font-family: 'W95FA';
+      text-align: right;
+	}
+	div {
+	  display: flex;
+      height: 40px;
+      width: 228px;
+	  font-weight: 1000;
+	  font-size: 24px;
+	  align-items:center;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="output"></div>
+  <script src='scripts/moment.js'></script>
+  <script>
+    var c;
+    setInterval(
+    c = function() {
+        output.innerText = moment().format('YYYY/MM/DD HH:mm:ss');
+    }, 1000);
+    c();
+  </script>
+</body>
+</html>
