@@ -1,7 +1,7 @@
 <!DOCTYPE html><html>
 
 <style>
-	@font-face { font-family: W95FA; src: url('W95FA_numbers.otf'); }
+	@font-face { font-family: W95FA; src: url('fonts/W95FA_numbers.otf'); }
 	body {
 		font-family: 'W95FA';
   }
@@ -15,12 +15,11 @@
 
 <body onload="main()" onbeforeunload="saveJSON()">
 	<canvas id=canvas width="1340" height="1024"></canvas>
-	<img id="floppy" src="floppy_48x48.png" hidden=true>
-	<img id="floppy_cat" src="floppy_cat_80x80.png" hidden=true>	
+	<img id="floppy" src="images/floppy_48x48.png" hidden=true>
+	<img id="floppy_cat" src="images/floppy_cat_80x80.png" hidden=true>	
 	
-	<script src="tmi.min.js"></script>
-	<!-- <script src="FileSaver.js"></script> -->
-	<script src="http://cdn.jsdelivr.net/g/filesaver.js"></script>
-	<script src="floppy_script.js"></script>
+	<script src="scripts/tmi.min.js"></script>
+	<script src="scripts/FileSaver.js"></script>
+	<script src="scripts/floppy_script.js"></script>
 </body>
 </html>
