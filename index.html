@@ -1,0 +1,26 @@
+<!DOCTYPE html><html>
+
+<style>
+	@font-face { font-family: W95FA; src: url('W95FA_numbers.otf'); }
+	body {
+		font-family: 'W95FA';
+  }
+  canvas {
+		position: fixed;
+    z-index: 1;
+		top: 0px;
+    left: 0px;
+	}
+</style>
+
+<body onload="main()" onbeforeunload="saveJSON()">
+	<canvas id=canvas width="1340" height="1024"></canvas>
+	<img id="floppy" src="floppy_48x48.png" hidden=true>
+	<img id="floppy_cat" src="floppy_cat_80x80.png" hidden=true>	
+	
+	<script src="tmi.min.js"></script>
+	<!-- <script src="FileSaver.js"></script> -->
+	<script src="http://cdn.jsdelivr.net/g/filesaver.js"></script>
+	<script src="floppy_script.js"></script>
+</body>
+</html>
