@@ -69,12 +69,12 @@ class Point {
     }
 
     // m is optional, so if not given, set to 1
-    if (m === undefined) m = 1;
-    this._m = m;
+	if ( m === undefined) m = 1;
+	this._m = m;
 
     // v is optional, so if not given, set to 0
-    if (v === undefined) v = new Vector(0, 0);
-    this.v = v;
+	if ( v === undefined) v = new Vector(0, 0);
+	this.v = v;
   }
 
   set x(value) {
@@ -167,10 +167,10 @@ class Point {
   }
 
   // update position, check border collision
-  update() {
+  update(c) {
     // todo: kinematics?
     this.move(this.v);
-    this.borderCollide(canvas);
+    this.borderCollide(c);
   }
 
   // check if this collides with the canvas border
@@ -210,7 +210,7 @@ class Point {
   }
 
   // calculate final momentum of this point when colliding with point2
-  getCollisionVf(point2, Cr) {
+  getCollisionVf(point2, Cr = 1) {
     // using coefficient of restitution, Cr. this will change depending on the object this is colliding with
     // FUCK
     // JavaScript can't overload operators. Either need to extend JS with custom features (SweetJS?) or do a ValueOf thing, which can't return a new vector
@@ -219,14 +219,11 @@ class Point {
     //Anyways the commented statement is a much easier-to-read version of the calculation. See wikipedia page for "coefficient of restitution" for formulae. Also the below khan academy page for more detail.
     // https://www.khanacademy.org/science/physics/linear-momentum/elastic-and-inelastic-collisions/a/what-are-elastic-and-inelastic-collisions
     // return ((ball1.v * ball1.mass) + (ball2.v * ball2.mass) + (ball2.mass * ball1.Cr * (ball2.v - ball1.v))) / (ball1.mass + ball2.mass)
-    return this.momentum
-      .sum(point2.momentum)
-      .sum(point2.v.diff(this.v).multScalar(point2.m * Cr))
-      .divScalar(this.m + point2.m);
+    return this.momentum.sum(point2.momentum).sum(point2.v.diff(this.v).multScalar(point2.m * Cr)).divScalar(this.m + point2.m);
   }
 
   // process of collision
-  collides(point2, Cr) {
+  collides(point2, Cr = 1) {
     if (this.isColliding(point2) && this.v.value > 0.01 && point2.v.value > 0.01) {
       var msg = "before collision";
       if (this.collisionDistance + point2.collisionDistance > 0) {
@@ -238,8 +235,58 @@ class Point {
 
       //velocity adjustments
       var tmp = this.getCollisionVf(point2, Cr);
-      point2.v = point2.getCollisionVf(this, 1);
+      point2.v = point2.getCollisionVf(this, Cr);
       this.v = tmp;
     }
   }
+}
+
+// ball
+class Ball extends Point {
+    constructor(xOrigin, yOrigin, vx, vy, radius, m) {
+		if ( m === undefined) m = Math.PI * radius ** 2;
+        super(xOrigin, yOrigin, m, new Vector(vx, vy));
+        this.radius = radius;
+    }
+
+    get str() {
+        return super.str + "\nradius: " + this.radius.toFixed(2);
+    }
+
+    get collisionDistance() {
+        // overloads
+        return this.radius;
+    }
+
+    update(c) {
+        // this.vy += this.gravity;
+        super.update(c);
+    }
+
+    collides(ball2, Cr = 1) {
+        // overloads
+        super.collides(ball2, Cr);
+
+        if (this.isColliding(ball2)) {
+            //reset position to get rid of overlap (separation)
+            var overlap = this.collisionDistance + ball2.collisionDistance - this.getDistance(ball2) + 1;
+            var xOver = overlap * Math.cos(Math.atan(Math.abs((this.y - ball2.y) / (this.x - ball2.x))));
+            var yOver = overlap * Math.sin(Math.atan(Math.abs((this.y - ball2.y) / (this.x - ball2.x))));
+
+            if (this.x <= ball2.x) {
+                this.x -= xOver / 2;
+                ball2.x += xOver / 2;
+            } else {
+                this.x += xOver / 2;
+                ball2.x -= xOver / 2;
+            }
+            if (this.y <= ball2.y) {
+                this.y -= yOver / 2;
+                ball2.y += yOver / 2;
+            } else {
+                this.y += yOver / 2;
+                ball2.y -= yOver / 2;
+            }
+        }
+    }
 }
