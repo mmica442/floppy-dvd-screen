@@ -5,19 +5,39 @@
 	@font-face { font-family: W95FA; src: url('fonts/W95FA_numbers.otf'); }
 	body {
 		font-family: 'W95FA';
-  }
-  canvas {
+	}
+	canvas {
 		position: fixed;
-    z-index: 1;
+		z-index: 1;
 		top: 0px;
-    left: 0px;
+		left: 0px;
+	}
+	button {
+		position: relative;
+		width: 180px;
+		left: 1921px;
+	}
+	textarea {
+		position: relative;
+		width: 174px;
+		left: 1921px;
 	}
 </style>
 
-<body onload="main()" onbeforeunload="saveJSON()">
-	<canvas id=canvas width="1340" height="1024"></canvas>
-	<img id="floppy" src="images/floppy_48x48.png" hidden=true>
-	<img id="floppy_cat" src="images/floppy_cat_80x80.png" hidden=true>	
+<body onload="main()" onbeforeunload="chatters.saveToLocalStorage()">
+	<canvas id=canvas width="1920" height="1024"></canvas>
+	<button id="btnSave" onclick="chatters.saveToLocalStorage()">save to local storage</button><br><br>
+	<button id="btnLoad" onclick="chatters.loadFromLocalStorage(false)">load from local storage</button><br><br>
+	<button id="btnLoadKeepShow" onclick="chatters.loadFromLocalStorage(true)">load from local storage (keep show status)</button><br><br>
+	<button id="btnLoadJSON" onclick="chatters.loadFromJSON(false)">load from json</button><br><br>
+	<button id="btnPrintJSON" onclick="chatters.outputFloppies()">output json</button><br><br>
+	<textarea id="inputJSON" rows=15></textarea><br><br>
+	<textarea id="outputJSON" rows=15></textarea>
+	
+	<img id="floppy" src="images/floppy_48x48.png" hidden=true></img>
+	<img id="floppy_cat" src="images/floppy_cat_80x80.png" hidden=true></img>
+	<img id="floppy_crab" src="images/floppy_crab_76x76.png" hidden=true></img>
+	<img id="floppy_crab_2" src="images/floppy_crab_76x76.png" hidden=true></img>
 	
 	<script src="scripts/tmi.min.js"></script>
 	<script src="http://cdn.jsdelivr.net/g/filesaver.js"></script>
