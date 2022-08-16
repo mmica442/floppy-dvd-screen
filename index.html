@@ -2,7 +2,7 @@
 
 <meta charset="UTF-8">
 <style>
-	@font-face { font-family: W95FA; src: url('fonts/W95FA_numbers.otf'); }
+	@font-face { font-family: W95FA; src: url('fonts/W95FA.otf'); }
 	body {
 		font-family: 'W95FA';
 	}
@@ -12,36 +12,95 @@
 		top: 0px;
 		left: 0px;
 	}
+    .debugWindow {
+        position: fixed;
+        background-color: #f2f2f2;
+        border: 1px solid #b7b8bc;
+        width: 160px;
+        left: 1921px;
+		padding: 5px;
+    }
+    .actionsWindow {
+        position: fixed;
+        background-color: #f2f2f2;
+        border: 1px solid #b7b8bc;
+        width: 200px;
+        left: 2101px;
+		padding: 5px;
+    }
 	button {
 		position: relative;
-		width: 180px;
-		left: 1921px;
+	}
+	input {
+		position: relative;
 	}
 	textarea {
 		position: relative;
-		width: 174px;
-		left: 1921px;
 	}
 </style>
 
 <body onload="main()" onbeforeunload="chatters.saveToLocalStorage()">
 	<canvas id=canvas width="1920" height="1024"></canvas>
-	<button id="btnSave" onclick="chatters.saveToLocalStorage()">save to local storage</button><br><br>
-	<button id="btnLoad" onclick="chatters.loadFromLocalStorage(false)">load from local storage</button><br><br>
-	<button id="btnLoadKeepShow" onclick="chatters.loadFromLocalStorage(true)">load from local storage (keep show status)</button><br><br>
-	<button id="btnLoadJSON" onclick="chatters.loadFromJSON(false)">load from json</button><br><br>
-	<button id="btnPrintJSON" onclick="chatters.outputFloppies()">output json</button><br><br>
-	<textarea id="inputJSON" rows=15></textarea><br><br>
-	<textarea id="outputJSON" rows=15></textarea>
+
+	<div class="debugWindow" id="debugWindow">
+		<button id="btnSetConstants" onclick="setConstants()">set constants</button><br><br>
+		<label for="inputAvgSpeed" id="inputAvgSpeedLabel">ideal avg momentum</label><br>
+		<input type="number" id="inputAvgSpeed" value=5000 min=0 max=10000 step=50><br><br>
+		<label for="inputEntropy" id="inputEntropyLabel">cr ratio to reduce</label><br>
+		<input type="number" id="inputEntropy" value=0.999 min=0 max=1 step=0.001><br><br>
+		<label for="inputPerpetual" id="inputPerpetualLabel">cr ratio to add</label><br>
+		<input type="number" id="inputPerpetual" value=1.001 min=1 max=2 step=0.001><br><br>
+		<label for="inputRemoveOnKill" id="inputRemoveOnKillLabel">cr remove on kill</label><br>
+		<input type="number" id="inputRemoveOnKill" value=0.9 min=0 max=1 step=0.01><br><br>
+		<br>
+		<label for="inputBoostTimeLimit" id="inputBoostTimeLimitLabel">boost time limit</label><br>
+		<input type="number" id="inputBoostTimeLimit" value=2000 min=0 max=1000000 step=100><br><br>
+		<label for="inputBoostMinSpeed" id="inputBoostMinSpeedLabel">boost min speed</label><br>
+		<input type="number" id="inputBoostMinSpeed" value=0.5 min=0.1 max=10 step=0.1><br><br>
+		<label for="inputBoostMaxSpeed" id="inputBoostMaxSpeedLabel">boost max speed</label><br>
+		<input type="number" id="inputBoostMaxSpeed" value=5 min=0.1 max=10 step=0.1><br><br>
+		<br>		
+		<label for="inputCrabRaveTimeLimit" id="inputCrabRaveTimeLimitLabel">crab rave time limit</label><br>
+		<input type="number" id="inputCrabRaveTimeLimit" value=2900 min=0 max=1000000 step=100><br><br>
+		<br>
+		<label for="inputBattleWidthMin" id="inputBattleWidthMinLabel">battle width min</label><br>
+		<input type="number" id="inputBattleWidthMin" value=320 min=0 max=1920 step=1><br><br>
+		<label for="inputBattleHeightMin" id="inputBattleHeightMinLabel">battle height min</label><br>
+		<input type="number" id="inputBattleHeightMin" value=180 min=0 max=1080 step=1><br><br>
+	</div>
+	
+	<div class="actionsWindow" id="actionsWindow">
+		<button id="btnSave" onclick="chatters.saveToLocalStorage()">save to local storage</button><br><br>
+		<button id="btnLoad" onclick="chatters.loadFromLocalStorage(false)">load from local storage</button><br><br>
+		<button id="btnLoadKeepShow" onclick="chatters.loadFromLocalStorage(true)">load from local storage (keep show status)</button><br><br>
+		<button id="btnLoadJSON" onclick="chatters.loadFromJSON(false)">load from json</button><br><br>
+		<button id="btnPrintJSON" onclick="chatters.outputFloppies()">output json</button><br><br>
+		<button id="btnShowAll" onclick="chatters.showAll()">show all chatters</button><br><br>
+		<button id="btnHideAll" onclick="chatters.hideAll()">hide all chatters</button><br><br>
+		<button id="btnSaveShowStatus" onclick="chatters.saveShowStatus()">save show status</button><br><br>
+		<button id="btnRestoreShowStatus" onclick="chatters.restoreShowStatus()">restore show status</button><br><br>
+		<button id="btnStartBonk" onclick="bonkBattle()">start bonk battle</button><br><br>
+		<button id="btnEndBonk" onclick="endBonkBattle()">end bonk battle</button><br><br>
+		<textarea id="inputJSON" rows=10></textarea><br><br>
+		<textarea id="outputJSON" rows=10></textarea><br><br>
+		
+		<button id="btnPrintAvgSpeed" onclick="showAvgMomentum()">show avg momentum</button><br><br>
+		<textarea id="avgSpeed" rows=1></textarea><br><br>
+		<textarea id="avgSpeedMax" rows=1></textarea><br><br>
+		<textarea id="avgSpeedMin" rows=1></textarea>
+	</div>
 	
 	<img id="floppy" src="images/floppy_48x48.png" hidden=true></img>
 	<img id="floppy_cat" src="images/floppy_cat_80x80.png" hidden=true></img>
 	<img id="floppy_crab" src="images/floppy_crab_76x76.png" hidden=true></img>
-	<img id="floppy_crab_2" src="images/floppy_crab_76x76.png" hidden=true></img>
+	<img id="floppy_crab_2" src="images/floppy_crab_2_76x76.png" hidden=true></img>
+	<img id="floppy_bee" src="images/floppy_bee_48x48.png" hidden=true></img>
 	
+	<script src="scripts/OAUTH.js"></script>
 	<script src="scripts/tmi.min.js"></script>
 	<script src="scripts/filesaver.js"></script>
 	<script src="scripts/classes.js"></script>
 	<script src="scripts/floppy_script.js"></script>
+	<script src="scripts/chatbot.js"></script>
 </body>
 </html>
